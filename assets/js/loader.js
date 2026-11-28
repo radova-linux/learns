@@ -1,9 +1,10 @@
-// Loads css/fonts.css and js/learns.bundle.js?v=2 on first interaction (or now if dark/hash needs it).
+// Loads js/learns.bundle.js?v=2 right after the DOM is ready, or sooner on a first interaction
+// (css/fonts.css is linked non-blocking in <head>).
 (function () {
   "use strict";
   var base = document.currentScript.src;
   var loaded = false;
-  var events = ["pointerdown", "keydown", "touchstart", "scroll"];
+  var events = ["pointerdown", "keydown", "touchstart", "scroll", "mouseover", "focusin"];
 
   function add(tag, attrs) {
     var el = document.createElement(tag);
@@ -29,8 +30,9 @@
     }
   }, true);
 
-  try {
-    if (localStorage.getItem("radova-theme") === "dark") load();
-  } catch (_) {}
-  if (location.hash.length > 1) load();
+  if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(load, 1);
+  } else {
+    document.addEventListener("DOMContentLoaded", function () { setTimeout(load, 1); }, { once: true });
+  }
 })();
